@@ -51,6 +51,10 @@ dependencies {
     testImplementation 'io.jmix.flowui:jmix-flowui-test-assist'
     implementation 'io.jmix.bpm:jmix-bpm-starter'
     implementation 'io.jmix.bpm:jmix-bpm-flowui-starter'
+    implementation 'io.jmix.notifications:jmix-notifications-starter'
+    implementation 'io.jmix.notifications:jmix-notifications-flowui-starter'
+    implementation 'io.jmix.quartz:jmix-quartz-flowui-starter'
+    implementation 'io.jmix.quartz:jmix-quartz-starter'
 }
 
 configurations.implementation {

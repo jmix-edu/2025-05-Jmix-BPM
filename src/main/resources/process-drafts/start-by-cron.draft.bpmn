@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:flowable="http://flowable.org/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="start-by-cron" name="Start by cron" isExecutable="true">
+    <startEvent id="startEvent1">
+      <extensionElements>
+        <flowable:executionListener class="com.company.jmixbpm.listeners.ProcessStartListener" event="start" />
+      </extensionElements>
+      <outgoing>Flow_13hpw7j</outgoing>
+      <timerEventDefinition id="TimerEventDefinition_1sko2e6">
+        <timeCycle xsi:type="tFormalExpression">0 0/1 * * * ?</timeCycle>
+      </timerEventDefinition>
+    </startEvent>
+    <endEvent id="Event_1efpc7v">
+      <incoming>Flow_13hpw7j</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_13hpw7j" sourceRef="startEvent1" targetRef="Event_1efpc7v" />
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="start-by-cron">
+      <bpmndi:BPMNShape id="Event_1gdjejy_di" bpmnElement="startEvent1">
+        <omgdc:Bounds x="150" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1efpc7v_di" bpmnElement="Event_1efpc7v">
+        <omgdc:Bounds x="242" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_13hpw7j_di" bpmnElement="Flow_13hpw7j">
+        <di:waypoint x="186" y="168" />
+        <di:waypoint x="242" y="168" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

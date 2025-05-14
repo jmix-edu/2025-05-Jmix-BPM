@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
-  <process id="pizza-process-start" name="Pizza process start" isExecutable="true">
+  <process id="pizza-process" name="Pizza process" isExecutable="true" flowable:candidateStarterUsers="peter" jmix:candidateStarterUsersValue="peter">
     <startEvent id="startEvent1" name="Feed developer">
       <extensionElements>
         <jmix:processVariables>
@@ -23,13 +23,9 @@
             <jmix:formField id="message" caption="Message" type="string" editable="true" required="false" />
             <jmix:formField id="pizzaEater" caption="Pizza eater" type="entity" editable="true" required="true">
               <jmix:formFieldProperty name="entityName" value="User" />
-              <jmix:formFieldProperty name="uiComponent" value="entityPicker" />
+              <jmix:formFieldProperty name="uiComponent" value="comboBox" />
               <jmix:formFieldProperty name="lookupScreen" value="User.list" />
-            </jmix:formField>
-            <jmix:formField id="approver" caption="Approver" type="entity" editable="true" required="true">
-              <jmix:formFieldProperty name="entityName" value="User" />
-              <jmix:formFieldProperty name="uiComponent" value="entityPicker" />
-              <jmix:formFieldProperty name="lookupScreen" value="User.list" />
+              <jmix:formFieldProperty name="query" value="select u from User u where u.position = &#39;Developer&#39;" />
             </jmix:formField>
           </jmix:formFields>
         </jmix:formData>
@@ -66,7 +62,7 @@
       <incoming>Flow_0xhskn5</incoming>
       <outgoing>Flow_0tqtue7</outgoing>
     </userTask>
-    <userTask id="Activity_0huhbvm" name="Approve order" flowable:assignee="${approver.username}" jmix:assigneeSource="processVariable" jmix:assigneeValue="approver">
+    <userTask id="Activity_0huhbvm" name="Approve order" flowable:candidateGroups="accountants" jmix:assigneeSource="expression" jmix:candidateGroupsValue="accountants">
       <extensionElements>
         <jmix:formData type="input-dialog" openMode="DIALOG">
           <jmix:formFields>
@@ -115,12 +111,17 @@
       <incoming>Flow_16ca82v</incoming>
       <outgoing>Flow_1xyrxp1</outgoing>
     </userTask>
-    <exclusiveGateway id="Gateway_0h3gtvj" default="Flow_1jxuzfc">
+    <exclusiveGateway id="Gateway_0h3gtvj">
       <incoming>Flow_0tqtue7</incoming>
       <outgoing>Flow_1jxuzfc</outgoing>
       <outgoing>Flow_19omyi1</outgoing>
     </exclusiveGateway>
-    <sequenceFlow id="Flow_1jxuzfc" name="Chosen" sourceRef="Gateway_0h3gtvj" targetRef="Activity_0huhbvm" />
+    <sequenceFlow id="Flow_1jxuzfc" name="Chosen" sourceRef="Gateway_0h3gtvj" targetRef="Activity_0huhbvm">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Activity_1j5c7aq" userTaskOutcome="pizza_chosen" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Activity_1j5c7aq_result') != null &amp;&amp; bpm_UserTaskResults.containsOutcome(execution.getVariable('Activity_1j5c7aq_result'), 'pizza_chosen')}</conditionExpression>
+    </sequenceFlow>
     <exclusiveGateway id="Gateway_0fyzplm" default="Flow_16ca82v">
       <incoming>Flow_0phs4ia</incoming>
       <outgoing>Flow_16ca82v</outgoing>
@@ -147,7 +148,7 @@
     </sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_process">
-    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="pizza-process-start">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="pizza-process">
       <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
         <omgdc:Bounds x="2" y="150" width="36" height="36" />
         <bpmndi:BPMNLabel>
