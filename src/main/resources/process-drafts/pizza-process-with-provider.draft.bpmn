@@ -55,7 +55,7 @@
           </jmix:formFields>
           <jmix:formOutcomes>
             <jmix:formOutcome id="pizza_chosen" caption="Pizza chosen" icon="ARROW_UP" />
-            <jmix:formOutcome id="not_hungry" caption="Not hungry" icon="THUMBS_O_DOWN" />
+            <jmix:formOutcome id="not_hungry" caption="Not hungry" icon="ARROW_DOWN" />
           </jmix:formOutcomes>
         </jmix:formData>
       </extensionElements>
@@ -82,7 +82,6 @@
           </jmix:formOutcomes>
         </jmix:formData>
         <jmix:springBean beanName="randomRobinUserProvider" methodName="getUser" />
-        <flowable:taskListener class="com.company.jmixbpm.listener.ApproveTaskListener" event="assignment" />
       </extensionElements>
       <incoming>Flow_1jxuzfc</incoming>
       <outgoing>Flow_0phs4ia</outgoing>

@@ -20,4 +20,5 @@ public interface PizzaProcessActorRole {
     @MenuPolicy(menuIds = "User.list")
     @ViewPolicy(viewIds = "User.list")
     void screens();
+
 }
