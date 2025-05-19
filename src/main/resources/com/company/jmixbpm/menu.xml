@@ -3,6 +3,9 @@
 
     <menu id="application" title="msg://com.company.jmixbpm/menu.application.title" opened="true">
         <item view="User.list" title="msg://com.company.jmixbpm.view.user/UserListView.title"/>
+        <item view="PizzaItem.list" title="msg://com.company.jmixbpm.view.pizzaitem/pizzaItemListView.title"/>
+        <item view="OrderLine.list" title="msg://com.company.jmixbpm.view.orderline/orderLineListView.title"/>
+        <item view="PizzaOrder.list" title="msg://com.company.jmixbpm.view.pizzaorder/pizzaOrderListView.title"/>
     </menu>
     <menu id="bpm" title="msg://io.jmix.bpmflowui/menu.bpm.title" opened="true">
         <item view="bpm_StartProcess" title="msg://io.jmix.bpmflowui/startProcess.title"/>

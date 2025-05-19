@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://orderLineListView.title"
+      focusComponent="orderLinesDataGrid">
+    <data>
+        <collection id="orderLinesDc"
+                    class="com.company.jmixbpm.entity.OrderLine">
+            <fetchPlan extends="_base">
+                <property name="pizzaItem" fetchPlan="_instance_name"/>
+                <property name="pizzaEater" fetchPlan="_instance_name"/>
+            </fetchPlan>
+            <loader id="orderLinesDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from OrderLine e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <genericFilter component="genericFilter"/>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <genericFilter id="genericFilter"
+                       dataLoader="orderLinesDl">
+            <properties include=".*"/>
+        </genericFilter>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createButton" action="orderLinesDataGrid.createAction"/>
+            <button id="editButton" action="orderLinesDataGrid.editAction"/>
+            <button id="removeButton" action="orderLinesDataGrid.removeAction"/>
+            <simplePagination id="pagination" dataLoader="orderLinesDl"/>
+        </hbox>
+        <dataGrid id="orderLinesDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="orderLinesDc"
+                  columnReorderingAllowed="true">
+            <actions>
+                <action id="createAction" type="list_create"/>
+                <action id="editAction" type="list_edit"/>
+                <action id="removeAction" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="pizzaItem"/>
+                <column property="specicialRequirements"/>
+                <column property="pizzaEater"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectButton" action="selectAction"/>
+            <button id="discardButton" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

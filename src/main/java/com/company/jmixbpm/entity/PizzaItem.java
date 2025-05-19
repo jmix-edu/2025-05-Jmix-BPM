@@ -1,33 +1,56 @@
 package com.company.jmixbpm.entity;
 
-import io.jmix.core.metamodel.datatype.EnumClass;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
-import org.springframework.lang.Nullable;
+import java.util.UUID;
 
+@JmixEntity
+@Table(name = "PIZZA_ITEM")
+@Entity
+public class PizzaItem {
+    @JmixGeneratedValue
+    @Column(name = "ID", nullable = false)
+    @Id
+    private UUID id;
 
-public enum PizzaItem implements EnumClass<String> {
+    @InstanceName
+    @Column(name = "NAME", nullable = false)
+    @NotNull
+    private String name;
 
-    VEGETABLE("A"),
-    FOUR_CHESE("B"),
-    PEPPERONI("C");
+    @Column(name = "PRICE", nullable = false)
+    @NotNull
+    private Long price;
 
-    private final String id;
-
-    PizzaItem(String id) {
-        this.id = id;
+    public Long getPrice() {
+        return price;
     }
 
-    public String getId() {
+    public void setPrice(Long price) {
+        this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public UUID getId() {
         return id;
     }
 
-    @Nullable
-    public static PizzaItem fromId(String id) {
-        for (PizzaItem at : PizzaItem.values()) {
-            if (at.getId().equals(id)) {
-                return at;
-            }
-        }
-        return null;
+    public void setId(UUID id) {
+        this.id = id;
     }
+
 }
