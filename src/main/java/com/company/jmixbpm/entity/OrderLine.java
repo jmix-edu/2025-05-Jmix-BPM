@@ -1,8 +1,11 @@
 package com.company.jmixbpm.entity;
 
 import io.jmix.core.DeletePolicy;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +35,9 @@ public class OrderLine {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private PizzaItem pizzaItem;
 
+    @Column(name = "QUANTITY")
+    private Long quantity;
+
     @Column(name = "SPECICIAL_REQUIREMENTS")
     private String specicialRequirements;
 
@@ -60,6 +66,14 @@ public class OrderLine {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    public Long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
+    }
 
     public OffsetDateTime getLastModifiedDate() {
         return lastModifiedDate;
@@ -133,4 +147,11 @@ public class OrderLine {
         this.id = id;
     }
 
+    @InstanceName
+    @DependsOnProperties({"pizzaItem", "pizzaEater"})
+    public String getInstanceName(MetadataTools metadataTools) {
+        return String.format("%s for %s",
+                metadataTools.format(pizzaItem),
+                metadataTools.format(pizzaEater));
+    }
 }

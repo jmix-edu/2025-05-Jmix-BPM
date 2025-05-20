@@ -38,6 +38,7 @@
                     <action id="entityClearAction" type="entity_clear"/>
                 </actions>
             </entityPicker>
+            <textField id="quantityField" property="quantity"/>
         </formLayout>
         <hbox id="detailActions">
             <button id="saveAndCloseButton" action="saveAction"/>

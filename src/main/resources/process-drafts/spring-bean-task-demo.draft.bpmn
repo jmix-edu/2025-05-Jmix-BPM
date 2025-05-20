@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="spring-bean-task-demo" name="Spring bean task demo" isExecutable="true">
+    <startEvent id="startEvent1">
+      <extensionElements>
+        <jmix:processVariables>
+          <jmix:processVariable name="message" type="string" />
+        </jmix:processVariables>
+        <jmix:formData type="input-dialog" openMode="DIALOG">
+          <jmix:formFields>
+            <jmix:formField id="message" caption="Message" type="string" editable="true" required="true" />
+          </jmix:formFields>
+        </jmix:formData>
+      </extensionElements>
+      <outgoing>Flow_1yn2oy1</outgoing>
+    </startEvent>
+    <sequenceFlow id="Flow_1yn2oy1" sourceRef="startEvent1" targetRef="Activity_02iwnrg" />
+    <endEvent id="Event_0bedcet">
+      <incoming>Flow_1yoqpch</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_1yoqpch" sourceRef="Activity_02iwnrg" targetRef="Event_0bedcet" />
+    <serviceTask id="Activity_02iwnrg" name="Bean service task" flowable:expression="${mySimpleBean.printMessage()}" jmix:taskType="springBean" jmix:beanName="mySimpleBean">
+      <extensionElements>
+        <jmix:springBean />
+        <jmix:springBean beanName="mySimpleBean" methodName="printMessage">
+          <jmix:methodParam name="execution" type="org.flowable.engine.delegate.DelegateExecution" isVariable="false" />
+        </jmix:springBean>
+      </extensionElements>
+      <incoming>Flow_1yn2oy1</incoming>
+      <outgoing>Flow_1yoqpch</outgoing>
+    </serviceTask>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="spring-bean-task-demo">
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
+        <omgdc:Bounds x="150" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0bedcet_di" bpmnElement="Event_0bedcet">
+        <omgdc:Bounds x="402" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dzmzin_di" bpmnElement="Activity_02iwnrg">
+        <omgdc:Bounds x="240" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1yn2oy1_di" bpmnElement="Flow_1yn2oy1">
+        <omgdi:waypoint x="186" y="168" />
+        <omgdi:waypoint x="240" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yoqpch_di" bpmnElement="Flow_1yoqpch">
+        <omgdi:waypoint x="340" y="168" />
+        <omgdi:waypoint x="402" y="168" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

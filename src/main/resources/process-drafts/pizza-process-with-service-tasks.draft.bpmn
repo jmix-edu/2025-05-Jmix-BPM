@@ -23,6 +23,7 @@
           </jmix:processVariable>
           <jmix:processVariable name="deliveryNumber" type="string" />
           <jmix:processVariable name="orderAmount" type="long" />
+          <jmix:processVariable name="quantity" type="long" />
         </jmix:processVariables>
         <jmix:formData type="input-dialog" openMode="DIALOG">
           <jmix:formFields>
@@ -45,7 +46,7 @@
     </startEvent>
     <sequenceFlow id="Flow_0tqtue7" sourceRef="Activity_1j5c7aq" targetRef="Gateway_0h3gtvj" />
     <sequenceFlow id="Flow_0phs4ia" sourceRef="Activity_0huhbvm" targetRef="Gateway_0fyzplm" />
-    <sequenceFlow id="Flow_0xhskn5" sourceRef="startEvent1" targetRef="Activity_1ldiaqw" />
+    <sequenceFlow id="Flow_0xhskn5" sourceRef="startEvent1" targetRef="Activity_0lwviaa" />
     <endEvent id="Event_1i60g6f" name="Enjoy pizza">
       <incoming>Flow_14gc9p7</incoming>
     </endEvent>
@@ -66,6 +67,7 @@
               <jmix:formFieldProperty name="lookupScreen" value="PizzaItem.list" />
               <jmix:formFieldProperty name="query" value="select p from PizzaItem p" />
             </jmix:formField>
+            <jmix:formField id="quantity" caption="Quantity" type="long" editable="true" required="false" />
             <jmix:formField id="specialRequirements" caption="Special requirements" type="multilineString" editable="true" required="false" />
           </jmix:formFields>
           <jmix:formOutcomes>
@@ -74,7 +76,7 @@
           </jmix:formOutcomes>
         </jmix:formData>
       </extensionElements>
-      <incoming>Flow_1g60uh0</incoming>
+      <incoming>Flow_14m2bq1</incoming>
       <outgoing>Flow_0tqtue7</outgoing>
     </userTask>
     <userTask id="Activity_0huhbvm" name="Approve order" flowable:assignee="${approver.username}" jmix:assigneeSource="processVariable" jmix:assigneeValue="approver">
@@ -92,6 +94,7 @@
               <jmix:formFieldProperty name="entityName" value="PizzaItem" />
               <jmix:formFieldProperty name="lookupScreen" value="PizzaItem.list" />
             </jmix:formField>
+            <jmix:formField id="orderAmount" caption="Order amount" type="long" editable="false" required="false" />
           </jmix:formFields>
           <jmix:formOutcomes>
             <jmix:formOutcome id="approved" caption="Approved" icon="DOLLAR" />
@@ -114,11 +117,11 @@
             </jmix:formField>
             <jmix:formField id="pizzaItem" caption="Pizza item" type="entity" editable="false" required="false">
               <jmix:formFieldProperty name="enumClass" value="com.company.jmixbpm.entity.PizzaItem" />
-              <jmix:formFieldProperty name="uiComponent" value="entityPicker" />
+              <jmix:formFieldProperty name="uiComponent" value="ComboBox" />
               <jmix:formFieldProperty name="entityName" value="PizzaItem" />
-              <jmix:formFieldProperty name="lookupScreen" value="PizzaItem.list" />
             </jmix:formField>
             <jmix:formField id="specialRequirements" caption="Special requirements" type="string" editable="false" required="false" />
+            <jmix:formField id="quantity" caption="Quantity" type="long" editable="false" required="false" />
           </jmix:formFields>
         </jmix:formData>
       </extensionElements>
@@ -160,7 +163,7 @@
       <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Activity_0huhbvm_result') != null &amp;&amp; bpm_UserTaskResults.containsOutcome(execution.getVariable('Activity_0huhbvm_result'), 'rejected')}</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="Flow_0lejkuy" sourceRef="Gateway_0fyzplm" targetRef="Gateway_06n3kdf" />
-    <sequenceFlow id="Flow_1g60uh0" sourceRef="Activity_1ldiaqw" targetRef="Activity_1j5c7aq" />
+    <sequenceFlow id="Flow_1g60uh0" sourceRef="Activity_1ldiaqw" targetRef="Activity_1rjtq0g" />
     <serviceTask id="Activity_1ldiaqw" name="Load default pizza" flowable:type="jmix-load-entities-jpql">
       <extensionElements>
         <flowable:field name="jpql">
@@ -173,7 +176,7 @@
           <flowable:string>single-element</flowable:string>
         </flowable:field>
       </extensionElements>
-      <incoming>Flow_0xhskn5</incoming>
+      <incoming>Flow_1gp9u22</incoming>
       <outgoing>Flow_1g60uh0</outgoing>
     </serviceTask>
     <sequenceFlow id="Flow_0eftjx3" sourceRef="Activity_18vlizt" targetRef="Activity_031ddyz" />
@@ -202,7 +205,7 @@
           <flowable:string>orderLine</flowable:string>
         </flowable:field>
         <flowable:field name="entityAttributes">
-          <flowable:string>[{"name":"pizzaItem","valueType":"expression","value":"${pizzaItem}"},{"name":"pizzaEater","valueType":"expression","value":"${pizzaEater}"},{"name":"pizzaOrder","valueType":"expression","value":"${pizzaOrder}"},{"name":"specicialRequirements","valueType":"expression","value":"${specialRequirements}"}]</flowable:string>
+          <flowable:string>[{"name":"pizzaItem","valueType":"expression","value":"${pizzaItem}"},{"name":"pizzaEater","valueType":"expression","value":"${pizzaEater}"},{"name":"pizzaOrder","valueType":"expression","value":"${pizzaOrder}"},{"name":"specicialRequirements","valueType":"expression","value":"${specialRequirements}"},{"name":"quantity","valueType":"expression","value":"${quantity}"}]</flowable:string>
         </flowable:field>
       </extensionElements>
       <incoming>Flow_0eftjx3</incoming>
@@ -303,19 +306,54 @@
       <conditionExpression xsi:type="tFormalExpression">${approvalType=="AUTO_REJECTED"}</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="Flow_1bggsy0" sourceRef="Activity_14o0fzw" targetRef="Activity_0w3mv6v" />
-    <scriptTask id="Activity_14o0fzw" name="Set order amount" scriptFormat="groovy">
+    <boundaryEvent id="Event_0njbtzz" cancelActivity="false" attachedToRef="Activity_0huhbvm">
+      <outgoing>Flow_0n2xp1l</outgoing>
+      <timerEventDefinition id="TimerEventDefinition_1551bkx">
+        <timeDuration xsi:type="tFormalExpression">PT15S</timeDuration>
+      </timerEventDefinition>
+    </boundaryEvent>
+    <sequenceFlow id="Flow_0n2xp1l" sourceRef="Event_0njbtzz" targetRef="Activity_16i2lyu" />
+    <serviceTask id="Activity_16i2lyu" name="Send assimnent email" flowable:type="jmix-send-email">
+      <extensionElements>
+        <flowable:field name="to">
+          <flowable:string>${approver.email}</flowable:string>
+        </flowable:field>
+        <flowable:field name="subject">
+          <flowable:string>Task assigned</flowable:string>
+        </flowable:field>
+        <flowable:field name="content">
+          <flowable:string>Task assigned to you!</flowable:string>
+        </flowable:field>
+        <flowable:field name="contentType">
+          <flowable:string>text/html; charset=UTF-8</flowable:string>
+        </flowable:field>
+      </extensionElements>
+      <incoming>Flow_0n2xp1l</incoming>
+    </serviceTask>
+    <sequenceFlow id="Flow_14m2bq1" sourceRef="Activity_1rjtq0g" targetRef="Activity_1j5c7aq" />
+    <scriptTask id="Activity_1rjtq0g" name="Generate greeting" scriptFormat="groovy">
+      <incoming>Flow_1g60uh0</incoming>
+      <outgoing>Flow_14m2bq1</outgoing>
+      <script>def maeesageWithGreeting = "Hello, " + pizzaEater.firstName + "! " + message
+execution.setVariable("message", maeesageWithGreeting)</script>
+    </scriptTask>
+    <sequenceFlow id="Flow_1gp9u22" sourceRef="Activity_0lwviaa" targetRef="Activity_1ldiaqw" />
+    <scriptTask id="Activity_0lwviaa" name="Set default quantity" scriptFormat="groovy">
+      <incoming>Flow_0xhskn5</incoming>
+      <outgoing>Flow_1gp9u22</outgoing>
+      <script>execution.setVariable("quantity", 1L)</script>
+    </scriptTask>
+    <serviceTask id="Activity_14o0fzw" name="Calculate order amount" flowable:expression="${pizzaService.calculateOrder(orderLine)}" flowable:resultVariable="orderAmount" jmix:taskType="expression">
       <incoming>Flow_1bq0e53</incoming>
       <outgoing>Flow_1bggsy0</outgoing>
-      <script>def amount = orderLine.pizzaItem.price
-execution.setVariable("orderAmount", amount)</script>
-    </scriptTask>
+    </serviceTask>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_process">
     <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="pizza-process">
       <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
-        <omgdc:Bounds x="-658" y="150" width="36" height="36" />
+        <omgdc:Bounds x="-938" y="150" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="-678" y="193" width="77" height="14" />
+          <omgdc:Bounds x="-958" y="193" width="77" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1i60g6f_di" bpmnElement="Event_1i60g6f">
@@ -349,15 +387,12 @@ execution.setVariable("orderAmount", amount)</script>
         <omgdc:Bounds x="752" y="292" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0ubwqzz_di" bpmnElement="Activity_1ldiaqw">
-        <omgdc:Bounds x="-600" y="128" width="100" height="80" />
+        <omgdc:Bounds x="-750" y="128" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1pfuw2b_di" bpmnElement="Activity_18vlizt">
         <omgdc:Bounds x="-250" y="128" width="100" height="80" />
         <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_00j4k0u_di" bpmnElement="Activity_031ddyz">
-        <omgdc:Bounds x="-100" y="128" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0iiivf4_di" bpmnElement="Activity_1axf9i8">
         <omgdc:Bounds x="600" y="270" width="100" height="80" />
@@ -384,9 +419,26 @@ execution.setVariable("orderAmount", amount)</script>
       <bpmndi:BPMNShape id="Gateway_1jgtqzz_di" bpmnElement="Gateway_1jgtqzz" isMarkerVisible="true">
         <omgdc:Bounds x="525" y="285" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1xlo310_di" bpmnElement="Activity_14o0fzw">
-        <omgdc:Bounds x="40" y="128" width="100" height="80" />
+      <bpmndi:BPMNShape id="Activity_1lazu7x_di" bpmnElement="Activity_16i2lyu">
+        <omgdc:Bounds x="410" y="410" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06i9gv3_di" bpmnElement="Activity_1rjtq0g">
+        <omgdc:Bounds x="-610" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_14k7dov_di" bpmnElement="Activity_0lwviaa">
+        <omgdc:Bounds x="-880" y="128" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_19opqmv_di" bpmnElement="Activity_14o0fzw">
+        <omgdc:Bounds x="45" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00j4k0u_di" bpmnElement="Activity_031ddyz">
+        <omgdc:Bounds x="-110" y="128" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1khln8f_di" bpmnElement="Event_0njbtzz">
+        <omgdc:Bounds x="442" y="190" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0tqtue7_di" bpmnElement="Flow_0tqtue7">
         <di:waypoint x="-360" y="168" />
@@ -397,8 +449,8 @@ execution.setVariable("orderAmount", amount)</script>
         <di:waypoint x="525" y="168" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0xhskn5_di" bpmnElement="Flow_0xhskn5">
-        <di:waypoint x="-622" y="168" />
-        <di:waypoint x="-600" y="168" />
+        <di:waypoint x="-902" y="168" />
+        <di:waypoint x="-880" y="168" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1xyrxp1_di" bpmnElement="Flow_1xyrxp1">
         <di:waypoint x="900" y="168" />
@@ -430,16 +482,16 @@ execution.setVariable("orderAmount", amount)</script>
         <di:waypoint x="550" y="105" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1g60uh0_di" bpmnElement="Flow_1g60uh0">
-        <di:waypoint x="-500" y="168" />
-        <di:waypoint x="-460" y="168" />
+        <di:waypoint x="-650" y="168" />
+        <di:waypoint x="-610" y="168" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0eftjx3_di" bpmnElement="Flow_0eftjx3">
         <di:waypoint x="-150" y="168" />
-        <di:waypoint x="-100" y="168" />
+        <di:waypoint x="-110" y="168" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1bq0e53_di" bpmnElement="Flow_1bq0e53">
-        <di:waypoint x="0" y="168" />
-        <di:waypoint x="40" y="168" />
+        <di:waypoint x="-10" y="168" />
+        <di:waypoint x="45" y="168" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ohkadx_di" bpmnElement="Flow_0ohkadx">
         <di:waypoint x="700" y="310" />
@@ -490,8 +542,20 @@ execution.setVariable("orderAmount", amount)</script>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1bggsy0_di" bpmnElement="Flow_1bggsy0">
-        <di:waypoint x="140" y="168" />
+        <di:waypoint x="145" y="168" />
         <di:waypoint x="190" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0n2xp1l_di" bpmnElement="Flow_0n2xp1l">
+        <di:waypoint x="460" y="226" />
+        <di:waypoint x="460" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14m2bq1_di" bpmnElement="Flow_14m2bq1">
+        <di:waypoint x="-510" y="168" />
+        <di:waypoint x="-460" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gp9u22_di" bpmnElement="Flow_1gp9u22">
+        <di:waypoint x="-780" y="168" />
+        <di:waypoint x="-750" y="168" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

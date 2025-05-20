@@ -55,6 +55,8 @@ dependencies {
     implementation 'io.jmix.notifications:jmix-notifications-flowui-starter'
     implementation 'io.jmix.quartz:jmix-quartz-flowui-starter'
     implementation 'io.jmix.quartz:jmix-quartz-starter'
+    implementation 'io.jmix.email:jmix-email-starter'
+    implementation 'io.jmix.email:jmix-email-flowui-starter'
 }
 
 configurations.implementation {
