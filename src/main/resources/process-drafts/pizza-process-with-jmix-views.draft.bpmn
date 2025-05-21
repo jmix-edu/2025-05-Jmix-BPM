@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
-  <process id="pizza-process" name="Pizza process" isExecutable="true" flowable:candidateStarterUsers="peter" jmix:candidateStarterUsersValue="peter">
+  <process id="pizza-process" name="Pizza process with Jmix views" isExecutable="true" flowable:candidateStarterUsers="peter" jmix:candidateStarterUsersValue="peter">
     <startEvent id="startEvent1" name="Feed developer">
       <extensionElements>
         <jmix:processVariables>
@@ -25,22 +25,7 @@
           <jmix:processVariable name="orderAmount" type="long" />
           <jmix:processVariable name="quantity" type="long" />
         </jmix:processVariables>
-        <jmix:formData type="input-dialog" openMode="DIALOG">
-          <jmix:formFields>
-            <jmix:formField id="message" caption="Message" type="string" editable="true" required="false" />
-            <jmix:formField id="pizzaEater" caption="Pizza eater" type="entity" editable="true" required="true">
-              <jmix:formFieldProperty name="entityName" value="User" />
-              <jmix:formFieldProperty name="uiComponent" value="comboBox" />
-              <jmix:formFieldProperty name="lookupScreen" value="User.list" />
-              <jmix:formFieldProperty name="query" value="select u from User u where u.position = &#39;Developer&#39;" />
-            </jmix:formField>
-            <jmix:formField id="approver" caption="Approver" type="entity" editable="true" required="true">
-              <jmix:formFieldProperty name="entityName" value="User" />
-              <jmix:formFieldProperty name="uiComponent" value="comboBox" />
-              <jmix:formFieldProperty name="query" value="select u from User u where u.position = &#39;Accountant&#39;" />
-            </jmix:formField>
-          </jmix:formFields>
-        </jmix:formData>
+        <jmix:formData type="jmix-screen" openMode="DIALOG" screenId="StartPizzaProcessForm" />
       </extensionElements>
       <outgoing>Flow_0xhskn5</outgoing>
     </startEvent>
@@ -57,24 +42,7 @@
     </sequenceFlow>
     <userTask id="Activity_1j5c7aq" name="Chose pizza" flowable:assignee="${pizzaEater.username}" jmix:assigneeSource="processVariable" jmix:assigneeValue="pizzaEater">
       <extensionElements>
-        <jmix:formData type="input-dialog" openMode="DIALOG">
-          <jmix:formFields>
-            <jmix:formField id="message" caption="Message" type="string" editable="false" required="false" />
-            <jmix:formField id="pizzaItem" caption="Pizza item" type="entity" editable="true" required="true">
-              <jmix:formFieldProperty name="enumClass" value="com.company.jmixbpm.entity.PizzaItem" />
-              <jmix:formFieldProperty name="uiComponent" value="comboBox" />
-              <jmix:formFieldProperty name="entityName" value="PizzaItem" />
-              <jmix:formFieldProperty name="lookupScreen" value="PizzaItem.list" />
-              <jmix:formFieldProperty name="query" value="select p from PizzaItem p" />
-            </jmix:formField>
-            <jmix:formField id="quantity" caption="Quantity" type="long" editable="true" required="false" />
-            <jmix:formField id="specialRequirements" caption="Special requirements" type="multilineString" editable="true" required="false" />
-          </jmix:formFields>
-          <jmix:formOutcomes>
-            <jmix:formOutcome id="pizza_chosen" caption="Pizza chosen" icon="ARROW_UP" />
-            <jmix:formOutcome id="not_hungry" caption="Not hungry" icon="ARROW_DOWN" />
-          </jmix:formOutcomes>
-        </jmix:formData>
+        <jmix:formData type="jmix-screen" openMode="DIALOG" screenId="ChoosePizzaForm" />
       </extensionElements>
       <incoming>Flow_14m2bq1</incoming>
       <outgoing>Flow_0tqtue7</outgoing>
@@ -117,8 +85,9 @@
             </jmix:formField>
             <jmix:formField id="pizzaItem" caption="Pizza item" type="entity" editable="false" required="false">
               <jmix:formFieldProperty name="enumClass" value="com.company.jmixbpm.entity.PizzaItem" />
-              <jmix:formFieldProperty name="uiComponent" value="ComboBox" />
+              <jmix:formFieldProperty name="uiComponent" value="entityPicker" />
               <jmix:formFieldProperty name="entityName" value="PizzaItem" />
+              <jmix:formFieldProperty name="lookupScreen" value="PizzaItem.list" />
             </jmix:formField>
             <jmix:formField id="specialRequirements" caption="Special requirements" type="string" editable="false" required="false" />
             <jmix:formField id="quantity" caption="Quantity" type="long" editable="false" required="false" />
@@ -135,7 +104,7 @@
     </exclusiveGateway>
     <sequenceFlow id="Flow_1jxuzfc" name="Chosen" sourceRef="Gateway_0h3gtvj" targetRef="Activity_18vlizt">
       <extensionElements>
-        <jmix:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Activity_1j5c7aq" userTaskOutcome="pizza_chosen" />
+        <jmix:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Activity_1j5c7aq" userTaskOutcome="selected" />
       </extensionElements>
       <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Activity_1j5c7aq_result') != null &amp;&amp; bpm_UserTaskResults.containsOutcome(execution.getVariable('Activity_1j5c7aq_result'), 'pizza_chosen')}</conditionExpression>
     </sequenceFlow>
@@ -394,6 +363,9 @@ execution.setVariable("message", maeesageWithGreeting)</script>
         <omgdc:Bounds x="-250" y="128" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00j4k0u_di" bpmnElement="Activity_031ddyz">
+        <omgdc:Bounds x="-110" y="128" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0iiivf4_di" bpmnElement="Activity_1axf9i8">
         <omgdc:Bounds x="600" y="270" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -433,9 +405,6 @@ execution.setVariable("message", maeesageWithGreeting)</script>
       <bpmndi:BPMNShape id="Activity_19opqmv_di" bpmnElement="Activity_14o0fzw">
         <omgdc:Bounds x="45" y="128" width="100" height="80" />
         <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_00j4k0u_di" bpmnElement="Activity_031ddyz">
-        <omgdc:Bounds x="-110" y="128" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1khln8f_di" bpmnElement="Event_0njbtzz">
         <omgdc:Bounds x="442" y="190" width="36" height="36" />

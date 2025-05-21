@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="call-activity-test" name="Call activity test" isExecutable="true">
+    <startEvent id="startEvent1">
+      <extensionElements>
+        <jmix:processVariables>
+          <jmix:processVariable name="city" type="string" />
+          <jmix:processVariable name="street" type="string" />
+          <jmix:processVariable name="building" type="string" />
+        </jmix:processVariables>
+        <jmix:formData type="input-dialog" openMode="DIALOG">
+          <jmix:formFields>
+            <jmix:formField id="city" caption="City" type="string" editable="true" required="true" />
+            <jmix:formField id="street" caption="Street" type="string" editable="true" required="true" />
+            <jmix:formField id="building" caption="Building" type="string" editable="true" required="true" />
+          </jmix:formFields>
+        </jmix:formData>
+      </extensionElements>
+      <outgoing>Flow_1ht4axk</outgoing>
+    </startEvent>
+    <sequenceFlow id="Flow_1ht4axk" sourceRef="startEvent1" targetRef="Activity_1m5cq69" />
+    <endEvent id="Event_1441v9y">
+      <incoming>Flow_1jbzmlw</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_1fbyc93" sourceRef="Activity_1m5cq69" targetRef="Activity_1gu871e" />
+    <callActivity id="Activity_1m5cq69" calledElement="print-address-process">
+      <extensionElements>
+        <flowable:in source="city" target="city" />
+        <flowable:in source="street" target="street" />
+        <flowable:in source="building" target="building" />
+        <flowable:out source="city" target="city" />
+        <flowable:out source="street" target="street" />
+        <flowable:out source="building" target="building" />
+      </extensionElements>
+      <incoming>Flow_1ht4axk</incoming>
+      <outgoing>Flow_1fbyc93</outgoing>
+    </callActivity>
+    <sequenceFlow id="Flow_1jbzmlw" sourceRef="Activity_1gu871e" targetRef="Event_1441v9y" />
+    <scriptTask id="Activity_1gu871e" name="Print changes" scriptFormat="groovy">
+      <incoming>Flow_1fbyc93</incoming>
+      <outgoing>Flow_1jbzmlw</outgoing>
+      <script>println "Address after call activity: $city, $street, $building"</script>
+    </scriptTask>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="call-activity-test">
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
+        <omgdc:Bounds x="150" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1441v9y_di" bpmnElement="Event_1441v9y">
+        <omgdc:Bounds x="532" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11sw0gx_di" bpmnElement="Activity_1m5cq69">
+        <omgdc:Bounds x="240" y="128" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dky3er_di" bpmnElement="Activity_1gu871e">
+        <omgdc:Bounds x="380" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1ht4axk_di" bpmnElement="Flow_1ht4axk">
+        <omgdi:waypoint x="186" y="168" />
+        <omgdi:waypoint x="240" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fbyc93_di" bpmnElement="Flow_1fbyc93">
+        <omgdi:waypoint x="340" y="168" />
+        <omgdi:waypoint x="380" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jbzmlw_di" bpmnElement="Flow_1jbzmlw">
+        <omgdi:waypoint x="480" y="168" />
+        <omgdi:waypoint x="532" y="168" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

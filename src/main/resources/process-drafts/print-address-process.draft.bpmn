@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="print-address-process" name="Print address process" isExecutable="true">
+    <startEvent id="startEvent1">
+      <extensionElements>
+        <jmix:processVariables>
+          <jmix:processVariable name="city" type="string" />
+          <jmix:processVariable name="street" type="string" />
+          <jmix:processVariable name="building" type="string" />
+        </jmix:processVariables>
+      </extensionElements>
+      <outgoing>Flow_1ftci9y</outgoing>
+    </startEvent>
+    <sequenceFlow id="Flow_1ftci9y" sourceRef="startEvent1" targetRef="Activity_1jcdt67" />
+    <endEvent id="Event_05cpmr7">
+      <incoming>Flow_185lcqs</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_185lcqs" sourceRef="Activity_1jcdt67" targetRef="Event_05cpmr7" />
+    <scriptTask id="Activity_1jcdt67" name="Print and change" scriptFormat="groovy">
+      <incoming>Flow_1ftci9y</incoming>
+      <outgoing>Flow_185lcqs</outgoing>
+      <script>println "Address in activity is: $city, $street, $building"
+
+execution.setVariable("city", $city + " road")
+execution.setVariable("street", $street + " strasse")
+execution.setVariable("building", $building + " house")</script>
+    </scriptTask>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="print-address-process">
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
+        <omgdc:Bounds x="150" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_05cpmr7_di" bpmnElement="Event_05cpmr7">
+        <omgdc:Bounds x="382" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18ue9ev_di" bpmnElement="Activity_1jcdt67">
+        <omgdc:Bounds x="230" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1ftci9y_di" bpmnElement="Flow_1ftci9y">
+        <di:waypoint x="186" y="168" />
+        <di:waypoint x="230" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_185lcqs_di" bpmnElement="Flow_185lcqs">
+        <di:waypoint x="330" y="168" />
+        <di:waypoint x="382" y="168" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

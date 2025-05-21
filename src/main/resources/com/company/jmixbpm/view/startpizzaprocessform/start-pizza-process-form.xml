@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://startPizzaProcessForm.title">
+    <data>
+        <collection id="eatersDc" class="com.company.jmixbpm.entity.User">
+            <fetchPlan extends="_base"/>
+            <loader id="eatersDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from User e where e.position = 'Developer']]>
+                </query>
+            </loader>
+        </collection>
+        <collection id="accountantsDc" class="com.company.jmixbpm.entity.User">
+            <fetchPlan extends="_base"/>
+            <loader id="accountantsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from User e where e.position = 'Accountant']]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="closeAction" type="view_close"/>
+    </actions>
+    <layout>
+        <formLayout>
+            <textField datatype="string" id="messageField" label="msg://startPizzaProcessForm.variable.message"/>
+            <entityComboBox id="pizzaEaterField" label="msg://startPizzaProcessForm.variable.pizzaEater" metaClass="User"
+                            itemsContainer="eatersDc" required="true" classNames="text-right">
+                <actions>
+                    <action id="entityClearAction" type="entity_clear"/>
+                </actions>
+            </entityComboBox>
+            <entityComboBox id="approverField" label="msg://startPizzaProcessForm.variable.approver" metaClass="User"
+                            itemsContainer="accountantsDc" required="true">
+                <actions>
+                    <action id="entityClearAction" type="entity_clear"/>
+                </actions>
+            </entityComboBox>
+        </formLayout>
+        <hbox id="actionsPanel">
+            <button id="startProcessBtn" icon="CHECK" text="msg://startPizzaProcessForm.startProcess"
+                    themeNames="primary"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

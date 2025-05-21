@@ -21,7 +21,7 @@ public interface PizzaProcessActorRole {
     void user();
 
     @MenuPolicy(menuIds = "User.list")
-    @ViewPolicy(viewIds = "User.list")
+    @ViewPolicy(viewIds = {"User.list", "StartPizzaProcessForm", "ChoosePizzaForm"})
     void screens();
 
     @EntityAttributePolicy(entityClass = PizzaItem.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
