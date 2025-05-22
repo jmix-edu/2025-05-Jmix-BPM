@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="compensation-demo" name="Compensation demo" isExecutable="true">
+    <startEvent id="startEvent1">
+      <extensionElements>
+        <jmix:processVariables>
+          <jmix:processVariable name="pizzaItem" type="entity">
+            <jmix:processVariableProperty name="entityName" value="PizzaItem" />
+          </jmix:processVariable>
+          <jmix:processVariable name="newPrice" type="long" />
+          <jmix:processVariable name="oldPrice" type="long" />
+        </jmix:processVariables>
+        <jmix:formData type="input-dialog" openMode="DIALOG">
+          <jmix:formFields>
+            <jmix:formField id="pizzaItem" caption="Pizza item" type="entity" editable="true" required="true">
+              <jmix:formFieldProperty name="entityName" value="PizzaItem" />
+              <jmix:formFieldProperty name="uiComponent" value="entityPicker" />
+              <jmix:formFieldProperty name="lookupScreen" value="PizzaItem.list" />
+            </jmix:formField>
+            <jmix:formField id="newPrice" caption="New price" type="long" editable="true" required="true" />
+          </jmix:formFields>
+        </jmix:formData>
+      </extensionElements>
+      <outgoing>Flow_0hmnmig</outgoing>
+    </startEvent>
+    <sequenceFlow id="Flow_0hmnmig" sourceRef="startEvent1" targetRef="Activity_1ctetgm" />
+    <serviceTask id="Activity_1ctetgm" name="Change price" flowable:expression="${pizzaService.changePrice(pizzaItem,newPrice)}" flowable:resultVariable="oldPrice" jmix:taskType="springBean" jmix:beanName="pizzaService">
+      <extensionElements>
+        <jmix:springBean beanName="pizzaService" methodName="changePrice">
+          <jmix:methodParam name="pizzaItem" type="com.company.jmixbpm.entity.PizzaItem" isVariable="true">pizzaItem</jmix:methodParam>
+          <jmix:methodParam name="newPrice" type="long" isVariable="true">newPrice</jmix:methodParam>
+        </jmix:springBean>
+      </extensionElements>
+      <incoming>Flow_0hmnmig</incoming>
+      <outgoing>Flow_1nh7jpg</outgoing>
+    </serviceTask>
+    <boundaryEvent id="Event_095zyd1" attachedToRef="Activity_1ctetgm">
+      <compensateEventDefinition id="CompensateEventDefinition_1v2nrlw" />
+    </boundaryEvent>
+    <serviceTask id="Activity_0rsm13a" name="Undo price change" isForCompensation="true" flowable:expression="${pizzaService.changePrice(pizzaItem,oldPrice)}" jmix:taskType="springBean" jmix:beanName="pizzaService">
+      <extensionElements>
+        <jmix:springBean beanName="pizzaService" methodName="changePrice">
+          <jmix:methodParam name="pizzaItem" type="com.company.jmixbpm.entity.PizzaItem" isVariable="true">pizzaItem</jmix:methodParam>
+          <jmix:methodParam name="newPrice" type="long" isVariable="true">oldPrice</jmix:methodParam>
+        </jmix:springBean>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="Flow_1nh7jpg" sourceRef="Activity_1ctetgm" targetRef="Activity_1rt9qim" />
+    <serviceTask id="Activity_1rt9qim" name="Check error" flowable:expression="${errorService.probablyError()}" jmix:taskType="springBean" jmix:beanName="errorService">
+      <extensionElements>
+        <jmix:springBean beanName="errorService" methodName="probablyError" />
+      </extensionElements>
+      <incoming>Flow_1nh7jpg</incoming>
+      <outgoing>Flow_1jnu7hx</outgoing>
+    </serviceTask>
+    <boundaryEvent id="Event_1hfnnka" attachedToRef="Activity_1rt9qim">
+      <outgoing>Flow_0uuhasp</outgoing>
+      <errorEventDefinition id="ErrorEventDefinition_1pi4ana" />
+    </boundaryEvent>
+    <endEvent id="Event_1ihfguz">
+      <incoming>Flow_1jnu7hx</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_1jnu7hx" sourceRef="Activity_1rt9qim" targetRef="Event_1ihfguz" />
+    <endEvent id="Event_1o7kyqq">
+      <incoming>Flow_1hi41ub</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_0uuhasp" sourceRef="Event_1hfnnka" targetRef="Event_07p39yx" />
+    <sequenceFlow id="Flow_1hi41ub" sourceRef="Event_07p39yx" targetRef="Event_1o7kyqq" />
+    <intermediateThrowEvent id="Event_07p39yx">
+      <incoming>Flow_0uuhasp</incoming>
+      <outgoing>Flow_1hi41ub</outgoing>
+      <compensateEventDefinition id="CompensateEventDefinition_1t0pgb4" />
+    </intermediateThrowEvent>
+    <association id="Association_1juy85w" associationDirection="One" sourceRef="Event_095zyd1" targetRef="Activity_0rsm13a" />
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="compensation-demo">
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
+        <omgdc:Bounds x="150" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13pzc3z_di" bpmnElement="Activity_1ctetgm">
+        <omgdc:Bounds x="240" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jxrllb_di" bpmnElement="Activity_0rsm13a">
+        <omgdc:Bounds x="330" y="250" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jt1rnb_di" bpmnElement="Activity_1rt9qim">
+        <omgdc:Bounds x="400" y="128" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ihfguz_di" bpmnElement="Event_1ihfguz">
+        <omgdc:Bounds x="562" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1o7kyqq_di" bpmnElement="Event_1o7kyqq">
+        <omgdc:Bounds x="592" y="272" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1eqxis2_di" bpmnElement="Event_07p39yx">
+        <omgdc:Bounds x="502" y="272" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0mqdskw_di" bpmnElement="Event_1hfnnka">
+        <omgdc:Bounds x="462" y="190" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0dd2yy2_di" bpmnElement="Event_095zyd1">
+        <omgdc:Bounds x="292" y="190" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0hmnmig_di" bpmnElement="Flow_0hmnmig">
+        <di:waypoint x="186" y="168" />
+        <di:waypoint x="240" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nh7jpg_di" bpmnElement="Flow_1nh7jpg">
+        <di:waypoint x="340" y="168" />
+        <di:waypoint x="400" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jnu7hx_di" bpmnElement="Flow_1jnu7hx">
+        <di:waypoint x="500" y="168" />
+        <di:waypoint x="562" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uuhasp_di" bpmnElement="Flow_0uuhasp">
+        <di:waypoint x="480" y="226" />
+        <di:waypoint x="480" y="290" />
+        <di:waypoint x="502" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hi41ub_di" bpmnElement="Flow_1hi41ub">
+        <di:waypoint x="538" y="290" />
+        <di:waypoint x="592" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1juy85w_di" bpmnElement="Association_1juy85w">
+        <di:waypoint x="310" y="226" />
+        <di:waypoint x="310" y="290" />
+        <di:waypoint x="330" y="290" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

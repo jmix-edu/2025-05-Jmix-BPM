@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="collections-providers-demo" name="Collections providers demo" isExecutable="true">
+    <startEvent id="startEvent1">
+      <extensionElements>
+        <jmix:processVariables>
+          <jmix:processVariable name="pizzaItems" type="entity-list">
+            <jmix:processVariableProperty name="entityName" value="PizzaItem" />
+          </jmix:processVariable>
+        </jmix:processVariables>
+      </extensionElements>
+      <outgoing>Flow_0n8o64o</outgoing>
+    </startEvent>
+    <sequenceFlow id="Flow_0n8o64o" sourceRef="startEvent1" targetRef="Activity_0c7b9yy" />
+    <serviceTask id="Activity_0c7b9yy" name="Load pizzas to variable" flowable:type="jmix-load-entities-jpql">
+      <extensionElements>
+        <flowable:field name="jpql">
+          <flowable:string>select p from PizzaItem p</flowable:string>
+        </flowable:field>
+        <flowable:field name="resultVariable">
+          <flowable:string>pizzaItems</flowable:string>
+        </flowable:field>
+        <flowable:field name="saveLoadResultAs">
+          <flowable:string>collection</flowable:string>
+        </flowable:field>
+        <flowable:field name="jpqlParameters">
+          <flowable:string>[]</flowable:string>
+        </flowable:field>
+      </extensionElements>
+      <incoming>Flow_0n8o64o</incoming>
+      <outgoing>Flow_02bmq4f</outgoing>
+    </serviceTask>
+    <sequenceFlow id="Flow_02bmq4f" sourceRef="Activity_0c7b9yy" targetRef="Activity_1kpbpux" />
+    <scriptTask id="Activity_1kpbpux" name="Print pizzas" scriptFormat="groovy">
+      <incoming>Flow_02bmq4f</incoming>
+      <outgoing>Flow_15t7h17</outgoing>
+      <multiInstanceLoopCharacteristics flowable:collection="pizzaItems" flowable:elementVariable="pizzaItems_item" jmix:collectionSource="processVariable" jmix:collectionValue="pizzaItems" />
+      <script>println "Pizza collection item information:"
+println "Name: $pizzaItems_item.name, Price: $pizzaItems_item.price"</script>
+    </scriptTask>
+    <endEvent id="Event_0ot80b3">
+      <incoming>Flow_15t7h17</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_15t7h17" sourceRef="Activity_1kpbpux" targetRef="Event_0ot80b3" />
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="collections-providers-demo">
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
+        <omgdc:Bounds x="150" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04hlq1j_di" bpmnElement="Activity_0c7b9yy">
+        <omgdc:Bounds x="240" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_12oy3hr_di" bpmnElement="Activity_1kpbpux">
+        <omgdc:Bounds x="400" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ot80b3_di" bpmnElement="Event_0ot80b3">
+        <omgdc:Bounds x="562" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0n8o64o_di" bpmnElement="Flow_0n8o64o">
+        <omgdi:waypoint x="186" y="168" />
+        <omgdi:waypoint x="240" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02bmq4f_di" bpmnElement="Flow_02bmq4f">
+        <omgdi:waypoint x="340" y="168" />
+        <omgdi:waypoint x="400" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15t7h17_di" bpmnElement="Flow_15t7h17">
+        <omgdi:waypoint x="500" y="168" />
+        <omgdi:waypoint x="562" y="168" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
