@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="multi-user-task-data-receiving" name="Multi user task with condition" isExecutable="true">
+    <startEvent id="startEvent1">
+      <extensionElements>
+        <jmix:processVariables>
+          <jmix:processVariable name="globalScore" type="long" />
+          <jmix:processVariable name="usersToPerform" type="entity-list">
+            <jmix:processVariableProperty name="entityName" value="User" />
+          </jmix:processVariable>
+        </jmix:processVariables>
+        <jmix:formData type="input-dialog" openMode="DIALOG">
+          <jmix:formFields>
+            <jmix:formField id="usersToPerform" caption="Users to perform" type="entity-list" editable="true" required="true">
+              <jmix:formFieldProperty name="entityName" value="User" />
+              <jmix:formFieldProperty name="uiComponent" value="entityPicker" />
+              <jmix:formFieldProperty name="lookupScreen" value="User.list" />
+            </jmix:formField>
+          </jmix:formFields>
+        </jmix:formData>
+      </extensionElements>
+      <outgoing>Flow_03v7acq</outgoing>
+    </startEvent>
+    <sequenceFlow id="Flow_03v7acq" sourceRef="startEvent1" targetRef="Activity_143drtj" />
+    <subProcess id="Activity_01lacnw">
+      <incoming>Flow_0rqciy3</incoming>
+      <outgoing>Flow_1hlh616</outgoing>
+      <multiInstanceLoopCharacteristics flowable:collection="usersToPerform" flowable:elementVariable="usersToPerform_item" jmix:collectionSource="processVariable" jmix:collectionValue="usersToPerform">
+        <completionCondition xsi:type="tFormalExpression">${nrOfCompletedInstances &gt; nrOfActiveInstances}</completionCondition>
+      </multiInstanceLoopCharacteristics>
+      <startEvent id="Event_0h53rl7">
+        <extensionElements>
+          <jmix:processVariables>
+            <jmix:processVariable name="score" type="long" />
+          </jmix:processVariables>
+        </extensionElements>
+        <outgoing>Flow_1p0zlue</outgoing>
+      </startEvent>
+      <sequenceFlow id="Flow_1p0zlue" sourceRef="Event_0h53rl7" targetRef="Activity_02s6mzg" />
+      <sequenceFlow id="Flow_14n3dxz" sourceRef="Activity_02s6mzg" targetRef="Activity_1ov58ql" />
+      <sequenceFlow id="Flow_03knl2a" sourceRef="Activity_1ov58ql" targetRef="Activity_0swrt34" />
+      <endEvent id="Event_09lyflg">
+        <incoming>Flow_1jvsfez</incoming>
+      </endEvent>
+      <sequenceFlow id="Flow_1jvsfez" sourceRef="Activity_0swrt34" targetRef="Event_09lyflg" />
+      <scriptTask id="Activity_02s6mzg" name="Set local variable to 0" scriptFormat="groovy">
+        <incoming>Flow_1p0zlue</incoming>
+        <outgoing>Flow_14n3dxz</outgoing>
+        <script>execution.setVariableLocal("score", 0)</script>
+      </scriptTask>
+      <userTask id="Activity_1ov58ql" name="Set score" flowable:assignee="${usersToPerform_item.username}" jmix:assigneeSource="expression" jmix:assigneeValue="${usersToPerform_item.username}">
+        <extensionElements>
+          <jmix:formData type="input-dialog" openMode="DIALOG">
+            <jmix:formFields>
+              <jmix:formField id="score" caption="Score" type="long" editable="true" required="true" />
+            </jmix:formFields>
+          </jmix:formData>
+        </extensionElements>
+        <incoming>Flow_14n3dxz</incoming>
+        <outgoing>Flow_03knl2a</outgoing>
+      </userTask>
+      <scriptTask id="Activity_0swrt34" name="Sum global score" scriptFormat="groovy">
+        <incoming>Flow_03knl2a</incoming>
+        <outgoing>Flow_1jvsfez</outgoing>
+        <script>execution.setVariable("globalScore", globalScore + score)</script>
+      </scriptTask>
+    </subProcess>
+    <sequenceFlow id="Flow_0rqciy3" sourceRef="Activity_143drtj" targetRef="Activity_01lacnw" />
+    <sequenceFlow id="Flow_1hlh616" sourceRef="Activity_01lacnw" targetRef="Activity_1j09qqg" />
+    <endEvent id="Event_14n0rs3">
+      <incoming>Flow_1glly9g</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_1glly9g" sourceRef="Activity_1j09qqg" targetRef="Event_14n0rs3" />
+    <scriptTask id="Activity_143drtj" name="Set global score to 0" scriptFormat="groovy">
+      <incoming>Flow_03v7acq</incoming>
+      <outgoing>Flow_0rqciy3</outgoing>
+      <script>execution.setVariable("globalScore", 0L)</script>
+    </scriptTask>
+    <scriptTask id="Activity_1j09qqg" name="Print final score" scriptFormat="groovy">
+      <incoming>Flow_1hlh616</incoming>
+      <outgoing>Flow_1glly9g</outgoing>
+      <script>println "Result score sum: $globalScore"</script>
+    </scriptTask>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="multi-user-task-data-receiving">
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
+        <omgdc:Bounds x="150" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01lacnw_di" bpmnElement="Activity_01lacnw" isExpanded="true">
+        <omgdc:Bounds x="410" y="68" width="670" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0h53rl7_di" bpmnElement="Event_0h53rl7">
+        <omgdc:Bounds x="450" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_09lyflg_di" bpmnElement="Event_09lyflg">
+        <omgdc:Bounds x="1022" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1mgj6qi_di" bpmnElement="Activity_02s6mzg">
+        <omgdc:Bounds x="540" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ntwf4w_di" bpmnElement="Activity_1ov58ql">
+        <omgdc:Bounds x="700" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1r5ho2q_di" bpmnElement="Activity_0swrt34">
+        <omgdc:Bounds x="860" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1p0zlue_di" bpmnElement="Flow_1p0zlue">
+        <omgdi:waypoint x="486" y="168" />
+        <omgdi:waypoint x="540" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14n3dxz_di" bpmnElement="Flow_14n3dxz">
+        <omgdi:waypoint x="640" y="168" />
+        <omgdi:waypoint x="700" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03knl2a_di" bpmnElement="Flow_03knl2a">
+        <omgdi:waypoint x="800" y="168" />
+        <omgdi:waypoint x="860" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jvsfez_di" bpmnElement="Flow_1jvsfez">
+        <omgdi:waypoint x="960" y="168" />
+        <omgdi:waypoint x="1022" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_14n0rs3_di" bpmnElement="Event_14n0rs3">
+        <omgdc:Bounds x="1322" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_14qvfko_di" bpmnElement="Activity_143drtj">
+        <omgdc:Bounds x="240" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wj88to_di" bpmnElement="Activity_1j09qqg">
+        <omgdc:Bounds x="1150" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_03v7acq_di" bpmnElement="Flow_03v7acq">
+        <omgdi:waypoint x="186" y="168" />
+        <omgdi:waypoint x="240" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rqciy3_di" bpmnElement="Flow_0rqciy3">
+        <omgdi:waypoint x="340" y="168" />
+        <omgdi:waypoint x="410" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hlh616_di" bpmnElement="Flow_1hlh616">
+        <omgdi:waypoint x="1080" y="168" />
+        <omgdi:waypoint x="1150" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1glly9g_di" bpmnElement="Flow_1glly9g">
+        <omgdi:waypoint x="1250" y="168" />
+        <omgdi:waypoint x="1322" y="168" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

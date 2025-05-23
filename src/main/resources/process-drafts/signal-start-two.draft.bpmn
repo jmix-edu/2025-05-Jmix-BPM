@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="signal-start-two" name="Signal start two" isExecutable="true">
+    <endEvent id="Event_0doi5zz">
+      <incoming>Flow_1ysecva</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_0qgttf9" sourceRef="startEvent1" targetRef="Activity_05d2to7" />
+    <sequenceFlow id="Flow_1ysecva" sourceRef="Activity_05d2to7" targetRef="Event_0doi5zz" />
+    <scriptTask id="Activity_05d2to7" name="Print" scriptFormat="groovy">
+      <incoming>Flow_0qgttf9</incoming>
+      <outgoing>Flow_1ysecva</outgoing>
+      <script>println ("Signal process two")</script>
+    </scriptTask>
+    <startEvent id="startEvent1">
+      <outgoing>Flow_0qgttf9</outgoing>
+      <signalEventDefinition id="SignalEventDefinition_0myacrr" signalRef="signal" />
+    </startEvent>
+  </process>
+  <signal id="signal" name="Signal" flowable:scope="global" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="signal-start-two">
+      <bpmndi:BPMNShape id="Event_0doi5zz_di" bpmnElement="Event_0doi5zz">
+        <omgdc:Bounds x="322" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_193v36o_di" bpmnElement="Activity_05d2to7">
+        <omgdc:Bounds x="200" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1a1rqu2_di" bpmnElement="startEvent1">
+        <omgdc:Bounds x="122" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0qgttf9_di" bpmnElement="Flow_0qgttf9">
+        <omgdi:waypoint x="158" y="168" />
+        <omgdi:waypoint x="200" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ysecva_di" bpmnElement="Flow_1ysecva">
+        <omgdi:waypoint x="300" y="168" />
+        <omgdi:waypoint x="322" y="168" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

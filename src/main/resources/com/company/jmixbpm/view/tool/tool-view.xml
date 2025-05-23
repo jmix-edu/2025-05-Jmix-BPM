@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://toolView.title">
+    <layout>
+        <vbox>
+            <h4 text="Messages tools"/>
+            <vbox>
+                <textField datatype="string" id="messageField" label="Message name"/>
+                <hbox>
+                    <button id="sendMessageBtn" text="Start process by message"/>
+                    <button id="intermediateSubscriptionsBtn" text="Get subscribed executions"/>
+                </hbox>
+            </vbox>
+            <hr/>
+            <h4 text="Signals tools"/>
+            <vbox>
+                <textField datatype="string" id="signalField" label="Signal"/>
+                <button id="throwSignalBtn" text="Throw broadcast signal"/>
+            </vbox>
+            <hr/>
+            <h4 text="Process tools"/>
+            <vbox>
+                <textField datatype="string" id="processInstanceIdField" label="Process Instance Id"/>
+                <hbox>
+                    <button id="sendToProcessInstanceBtn" text="Send message to process instance"/>
+                </hbox>
+                <textField datatype="string" id="executionField" label="Execution ID"/>
+                <hbox>
+                    <button id="throwMessageToExecutionBtn" text="Throw message to execution"/>
+                    <button id="throwSignalToExecutionBtn" text="Throw signal to execution"/>
+                </hbox>
+            </vbox>
+            <hbox>
+                <!--                <button id="getSubscriptionsBtn" text="Get subscribed definitions"/>-->
+                <!--                <button id="intermediateSubscriptionsBtn" text="Get subscribed executions"/>-->
+            </hbox>
+
+            <textField id="procDefField" title="Process definition" datatype="string" label="Process definition"/>
+            <button id="eventRegistryBtn" text="Event Registry" visible="false"/>
+            <button id="eventDefinitionsBtn" text="Event Definitions" visible="false"/>
+            <button id="startByKey" text="Start by Key"/>
+            <button id="startById" text="Start by Id"/>
+            <button id="signalAsyncBtn" text="Async"/>
+            <button id="acquireJobsBtn" text="Acquire jobs"/>
+            <vbox>
+                <h5 text="Subscriptions"/>
+
+                <button id="msgSbscrBtn" text="Get message subscriptions."/>
+                <button id="signalSbscrBtn" text="Get signal subscriptions."/>
+                <button id="timerSbscrBtn" text="Get timer subscriptions."/>
+            </vbox>
+
+            <button id="getSubscriptionsBtn" text="Get subscribed definitions"/>
+
+        </vbox>
+    </layout>
+</view>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="wait-message-demo" name="Wait message demo" isExecutable="true">
+    <startEvent id="startEvent1">
+      <outgoing>Flow_1v70yym</outgoing>
+    </startEvent>
+    <sequenceFlow id="Flow_1v70yym" sourceRef="startEvent1" targetRef="Event_1jqy8a2" />
+    <sequenceFlow id="Flow_14o39vr" sourceRef="Event_1jqy8a2" targetRef="Activity_1r1ffrr" />
+    <endEvent id="Event_0jfsevi">
+      <incoming>Flow_1x7mzl2</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_1x7mzl2" sourceRef="Activity_1r1ffrr" targetRef="Event_0jfsevi" />
+    <scriptTask id="Activity_1r1ffrr" name="Print" scriptFormat="groovy">
+      <incoming>Flow_14o39vr</incoming>
+      <outgoing>Flow_1x7mzl2</outgoing>
+      <script>println "I've been waiting enough!!!"</script>
+    </scriptTask>
+    <intermediateCatchEvent id="Event_1jqy8a2">
+      <incoming>Flow_1v70yym</incoming>
+      <outgoing>Flow_14o39vr</outgoing>
+      <messageEventDefinition id="MessageEventDefinition_1bao1vy" messageRef="continue" />
+    </intermediateCatchEvent>
+  </process>
+  <message id="continue" name="Continue" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="wait-message-demo">
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
+        <omgdc:Bounds x="150" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0jfsevi_di" bpmnElement="Event_0jfsevi">
+        <omgdc:Bounds x="502" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1bnwx6d_di" bpmnElement="Activity_1r1ffrr">
+        <omgdc:Bounds x="340" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_11rymio_di" bpmnElement="Event_1jqy8a2">
+        <omgdc:Bounds x="242" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1v70yym_di" bpmnElement="Flow_1v70yym">
+        <omgdi:waypoint x="186" y="168" />
+        <omgdi:waypoint x="242" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14o39vr_di" bpmnElement="Flow_14o39vr">
+        <omgdi:waypoint x="278" y="168" />
+        <omgdi:waypoint x="340" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1x7mzl2_di" bpmnElement="Flow_1x7mzl2">
+        <omgdi:waypoint x="440" y="168" />
+        <omgdi:waypoint x="502" y="168" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
